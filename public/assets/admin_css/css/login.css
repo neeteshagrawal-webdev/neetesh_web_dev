@@ -1,0 +1,86 @@
+       /* Style for the card container */
+       .card-container {
+        position: relative;
+        margin-top: 50px; /* Optional: space from the top */
+    }
+
+
+
+
+  
+
+    /* Center the card on the page */
+    .card {
+        margin: 0 auto;
+        max-width: 400px; /* Optional: set a maximum width for the card */
+    }
+    
+    
+    .btn-user:hover {
+background-color: #4e73df;
+border-color: #4e73df;
+transform: scale(1.05);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+transition: all 0.3s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+from {
+    opacity: 0;
+}
+to {
+    opacity: 1;
+}
+}
+
+@keyframes slideDown {
+from {
+    transform: translateY(-30px);
+}
+to {
+    transform: translateY(0);
+}
+}
+input::placeholder {
+transition: all 0.3s ease-in-out;
+color: #d1d1d1;
+}
+
+input:focus::placeholder {
+transform: translateY(-10px);
+font-size: 12px;
+opacity: 0.8;
+color: #4e73df;
+}
+
+
+body.bg-gradient-primary {
+background: linear-gradient(-45deg, #4e73df, #224abe, #4e73df, #1e1e2f);
+background-size: 400% 400%;
+animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+0% {
+    background-position: 0% 50%;
+}
+50% {
+    background-position: 100% 50%;
+}
+100% {
+    background-position: 0% 50%;
+}
+}
+.card {
+opacity: 0;
+transform: translateY(50px);
+animation: slideUp 0.8s ease forwards;
+}
+
+@keyframes slideUp {
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
