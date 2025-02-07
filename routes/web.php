@@ -12,3 +12,4 @@ Route::get('/scrollMessage', [UserController::class, 'scroll_message'])->name('s
 Route::get('/users', [UserController::class, 'users_view'])->name('users.show');
 Route::get('/loginActivity', [UserController::class, 'login_activity'])->name('login.activity');
 Route::get('/report', [UserController::class, 'report_show'])->name('user.report');
+Route::post('/uploadManual', [UserController::class, 'uploadManual'])->name('uploadManual');
