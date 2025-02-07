@@ -10,9 +10,48 @@ use App\Models\Uploadmaster;
 class UserController extends Controller
 {
     //
+    public function deleteUploaddata($id){
+
+        $data = Uploadmaster::find($id);
+
+        if (!$data) {
+            return response()->json(['success' => false, 'message' => 'data not found!']);
+        }
+
+        $data->delete();
+
+        return response()->json(['success' => true, 'message' => 'data deleted successfully!']);
 
 
+    }
 
+    public function editManualData(Request $request){
+
+        $data = Uploadmaster::find($request->uploadId);
+        $data->category = $request->category;
+        $data->subcategory = $request->subcategory;
+        $data->priority = $request->priority;
+        $data->letter_date =$request->letter_date;
+        $data->letter_number=$request->letter_number;
+        $data->subject_of_letter=$request->subject_of_letter;
+        $data->save();
+
+        return response()->json(['success' => true, 'message' => 'User updated successfully!']);
+
+
+    }
+
+    public function updateManualData($id){
+        
+        $uploaddata = Uploadmaster::find($id);
+        //dd($uploaddata);
+        if (!$uploaddata) {
+            return response()->json(['success' => false, 'message' => 'User not found!']);
+        }
+
+        return response()->json(['success' => true, 'upload' => $uploaddata]);
+
+    }
     public function upload_data(){
 
         $category = Category::get();
@@ -104,8 +143,8 @@ class UserController extends Controller
     public function report_show(){
 
 
-        $category = Category::get();
-        dd($category);
+        /*$category = Category::get();
+        dd($category);*/
         return view('report');
     }
 }
