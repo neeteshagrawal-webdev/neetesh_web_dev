@@ -19,33 +19,33 @@
                     <thead>
                         <tr>
                             <th>Sr.No.</th>
-                            <th>Question</th>
-                            <th>Answer</th>
-                            <th>Sequence</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th>DisplayName</th>
+                            <th>Email</th>
+                            <th>Designation</th>
+                            <th>RoleId</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Example Row -->
-                        
+                        <?php $i = 1; ?>
+                        @foreach($userData as $data)
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{$i++}}</td>
+                            <td>{{$data->name}}</td>
+                            <td>{{$data->email}}</td>
+                            <td>{{$data->designation}}</td>
+                            <td>{{$data->role}}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#editCategoryModal1__id">
+                            	   <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#editCategoryModal1__id">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                            </td>
-                            <td class="text-center">
                                 <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCategoryModal1__id">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-            
+            			@endforeach
                        
                     </tbody>
                 </table>

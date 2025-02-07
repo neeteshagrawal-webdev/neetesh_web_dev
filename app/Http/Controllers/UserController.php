@@ -90,11 +90,16 @@ class UserController extends Controller
     	return view('scroll_message');
     }
     public function users_view(){
-    	return view('user_view');
+
+        $userData = User::get();
+
+    	return view('user_view',compact('userData'));
     }
     public function login_activity(){
 
-    	return view('login_activity');
+        $loginActivities = User::where('id', Auth::id())->latest()->get();
+        //dd($loginActivities);
+    	return view('login_activity',compact('loginActivities'));
     }
     public function report_show(){
 

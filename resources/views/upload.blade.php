@@ -88,17 +88,53 @@
                         <div class="modal-body">
                             
                             <div class="form-group">
-                                <label for="categoryName">Question</label>
-                                <input type="text" class="form-control" id="question" name="question" placeholder="Enter Question" value="" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="categoryName">Answer</label>
-                                <input type="text" class="form-control" id="answer" name="answer" placeholder="Enter Answer" value="" required>
-                            </div>
-                                <div class="form-group">
-                                    <label for="categoryName">Sequence</label>
-                                    <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-                                </div>
+                        <label for="categoryName">Category</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Please Select</option>
+                            <option value="Kavach">Kavach</option>
+                            <option value="LTE">LTE</option>
+                            <option value="5G">5G</option>
+                        </select>
+                      
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Subcategory</label>
+                           <select class="form-control" id="subcategory" name="subcategory" required>
+                                <option value="">Please Select</option>
+                                <option value="Brochure">Brochure</option>
+                                <option value="Advisories">Advisories</option>
+                                <option value="Multimedia">Multimedia</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Priority</label>
+                          <select class="form-control" id="Priority" name="priority" required>
+                                <option value="">Please Select</option>
+                                <option value="PRIORITY">PRIORITY</option>
+                                <option value="MOST PRIORITY">MOST PRIORITY</option>
+                                <option value="LEAST PRIORITY">LEAST PRIORITY</option>
+                                <option value="GENERAL">GENERAL</option>
+                                <option value="OTHERS">OTHERS</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Letter Date</label>
+                        <input type="date" class="form-control" id="letter_date" name="letter_date" placeholder="Enter Question" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Letter Number</label>
+                        <input type="text" class="form-control" id="letter_number" name="letter_number" placeholder="Enter Letter Number"  required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Subject Of Letter</label>
+                        <input type="text" class="form-control" id="subject_of_letter" name="subject_of_letter" placeholder="Enter Subject"  required>
+                    </div>
+                   
+                   <div class="form-group">
+                        <label for="categoryName">Upload File</label>
+                        <input type="file" class="form-control" id="file" name="file" placeholder="select file"  required>
+                    </div>
+                   
                                
                             
                         </div>
