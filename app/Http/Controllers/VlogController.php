@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Vlog;
 use Illuminate\Http\Request;
 use App\Models\Like;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 
 class VlogController extends Controller
@@ -49,6 +50,42 @@ class VlogController extends Controller
         return redirect()->route('vlogs.index')->with('success', 'Vlog Added Successfully');
     }
     
+    public function addComment(Request $request)
+{
+    $request->validate([
+        'vlog_id' => 'required|exists:vlogs,id',
+        'comment' => 'required|string|max:1000',
+    ]);
+
+    $comment = Comment::create([
+        'vlog_id' => $request->vlog_id,
+        'user_id' => Auth::id(),
+        'comment' => $request->comment,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'comment' => [
+            'id' => $comment->id,
+            'user_name' => Auth::user()->name,
+            'comment' => $comment->comment,
+        ]
+    ]);
+}
+
+public function deleteComment($id)
+{
+    $comment = Comment::findOrFail($id);
+
+    if (Auth::id() !== $comment->user_id) {
+        return response()->json(['success' => false, 'error' => 'Unauthorized action.']);
+    }
+
+    $comment->delete();
+
+    return response()->json(['success' => true]);
+}
+
 
 
     // ✅ 4. Show Edit Form
