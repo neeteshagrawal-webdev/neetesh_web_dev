@@ -61,7 +61,8 @@
                                 <button class="btn btn-sm btn-danger" onclick="deleteData({{$data->id}})">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <a href="{{$data->upload_file}}" class="btn btn-sm btn-primary" target="_blank"><i class="fa fa-eye"></i></a>
+                                
+                                <a href="{{ asset('storage/' . $data->upload_file) }}" class="btn btn-sm btn-primary" target="_blank"><i class="fa fa-eye"></i></a>
                             </td>
                         </tr>
                         <?php $i++; ?>
