@@ -220,7 +220,8 @@
             <img src="https://www.ezsmartmall.com/static/ezsmart/assets/admin_css/img/undraw_profile.svg" alt="Profile" class="me-3" style="width: 50px; height: 50px; border-radius: 50%;">
             <div class="user-details">
                 <strong>{{ $vlog->user->name ?? 'Unknown' }}</strong>
-                <small class="text-muted d-block">2 minutes ago</small>
+                <small class="text-muted d-block">{{ $vlog->created_at->diffForHumans() ?? '' }}</small>
+
             </div>
         </div>
         <!-- Three-Dot Menu -->
@@ -231,8 +232,15 @@
     </button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
        
-                <li><a class="dropdown-item" href="#" onclick="copyLink()">Copy link to post</a></li>
-                <li><a class="dropdown-item" href="#" onclick="embedPost()">Delete this post</a></li>
+                <!-- <li><a class="dropdown-item" href="#" onclick="copyLink()">Copy link to post</a></li> -->
+                @if(auth()->id() === $vlog->user_id)
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteVlogModal" onclick="setDeleteForm('{{ route('vlogs.destroy', $vlog->id) }}')">
+                        Delete this post
+                    </a>
+                </li>
+            @endif
+            
     </ul>
 </div>
     </div>
@@ -259,7 +267,7 @@
 
             <div class="col-4">
                 <i class="bi bi-chat text-secondary d-block"></i>
-                <span>14 comments</span>
+                <span>{{$vlog->comments->count()}} comments</span>
             </div>
             
         </div>
@@ -280,7 +288,7 @@
                    {{ $userLike && $userLike->type == 'like' ? 'btn-primary text-dark' : 'btn-light' }}">
         <i class="bi {{ $userLike && $userLike->type == 'like' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up' }} me-2"></i> 
         {{ $userLike && $userLike->type == 'like' ? 'Liked' : 'Like' }}
-        <span id="likeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->like }}</span>
+        <!-- <span id="likeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->like }}</span> -->
     </button>
 </div>
 
@@ -291,7 +299,7 @@
                    {{ $userLike && $userLike->type == 'dislike' ? 'btn-danger text-dark' : 'btn-light' }}">
         <i class="bi {{ $userLike && $userLike->type == 'dislike' ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down' }} me-2"></i> 
         {{ $userLike && $userLike->type == 'dislike' ? 'Disliked' : 'Dislike' }}
-        <span id="dislikeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->dislike }}</span>
+        <!-- <span id="dislikeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->dislike }}</span> -->
     </button>
 </div>
 
@@ -312,38 +320,88 @@
 </div>
 
 <!-- Comments Section (Last Footer) -->
-<div id="commentsFooter" class="footer mt-3" style="width: 100%;">
-    <div id="commentsSection" class="mt-3" style="display: none;width: 100%;">
-        <div class="mb-2">
-            <textarea id="newComment" class="form-control" rows="2" placeholder="Write a comment..."></textarea>
+<!-- Comments Section (Bootstrap Styled) -->
+<div id="commentsFooter" class="footer mt-3 w-100">
+    <div class="card shadow mt-3" id="commentsSection" style="display: none; width: 100%;">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Comments</h5>
+            
         </div>
-        <button id="addCommentButton" class="btn btn-primary btn-sm">Add Comment</button>
-        <div id="commentsList" class="mt-3">
-            <p class="text-muted">No comments yet. Be the first to comment!</p>
+        <div class="card-body">
+            <input type="hidden" id="vlogId" value="{{ $vlog->id }}">
+
+            <!-- Comment Input Field -->
+            <div class="mb-3">
+                <textarea id="newComment" class="form-control border rounded shadow-sm" rows="2" placeholder="Write a comment..."></textarea>
+            </div>
+            <button id="addCommentButton" class="btn btn-primary btn-sm">Add Comment</button>
+
+            <!-- Comments List -->
+            <div id="commentsList" class="mt-3">
+                @if($vlog->comments->count() > 0)
+                    @foreach($vlog->comments as $comment)
+                        <div class="card shadow-sm p-2 mb-2 border rounded" data-id="{{ $comment->id }}">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <strong class="me-2">{{ $comment->user->name }}</strong>
+                                    <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                                </div>
+                            
+                                @if(auth()->id() === $comment->user_id)
+                                    <!-- <button  style="padding: 5px;font-size: 11px;" class="btn btn-light btn-sm delete-comment" data-id="{{ $comment->id }}"> -->
+                                        <i  class="fas fa-trash-alt delete-comment" data-id="{{ $comment->id }}" style="color: #000;"></i>
+                                    <!-- </button> -->
+                                @endif
+                            </div>
+                            
+                            <p class="mb-1">{{ $comment->comment }}</p>
+
+                            
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-muted text-center" id="noComments">No comments yet. Be the first to comment!</p>
+                @endif
+            </div>
         </div>
     </div>
 </div>
+
+
+
 </div>
 @endforeach
 
-<!-- Embed Modal -->
-<div class="modal fade" id="embedModal" tabindex="-1" aria-labelledby="embedModalLabel" aria-hidden="true">
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteVlogModal" tabindex="-1" aria-labelledby="deleteVlogModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="embedModalLabel">Delete this Post</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="deleteVlogModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this post
+                Are you sure you want to delete this vlog? This action cannot be undone.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="Submit" class="btn btn-danger">Delete</button>
-              </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteVlogForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+</div>
+<script>
+    function setDeleteForm(actionUrl) {
+        document.getElementById("deleteVlogForm").action = actionUrl;
+    }
+</script>
+
 
 <script>function handleLikeDislike(vlogId, type, button) {
     const likeCountElement = document.getElementById(`likeCount${vlogId}`);
@@ -464,55 +522,111 @@
     });
 </script>
 <script>
-    const commentButton = document.getElementById("commentButton");
-    const commentsSection = document.getElementById("commentsSection");
-    const addCommentButton = document.getElementById("addCommentButton");
-    const newComment = document.getElementById("newComment");
-    const commentsList = document.getElementById("commentsList");
+    document.addEventListener("DOMContentLoaded", function () {
+        const commentButton = document.getElementById("commentButton");
+        const commentsSection = document.getElementById("commentsSection");
+        const addCommentButton = document.getElementById("addCommentButton");
+        const newComment = document.getElementById("newComment");
+        const commentsList = document.getElementById("commentsList");
+        const vlogId = document.getElementById("vlogId").value;
 
-    // Toggle comments section visibility
-    commentButton.addEventListener("click", () => {
-        if (commentsSection.style.display === "none") {
-            commentsSection.style.display = "block";
-        } else {
-            commentsSection.style.display = "none";
-        }
-    });
+        // 📌 Toggle comments section visibility when clicking the comment button
+        commentButton.addEventListener("click", function () {
+            commentsSection.style.display = commentsSection.style.display === "none" || commentsSection.style.display === "" ? "block" : "none";
+        });
 
-    // Add a new comment
-    addCommentButton.addEventListener("click", () => {
-        const commentText = newComment.value.trim();
+        // 📌 Function to Add a New Comment (AJAX)
+        addCommentButton.addEventListener("click", function () {
+            const commentText = newComment.value.trim();
 
-        if (commentText) {
-            const commentElement = document.createElement("p");
-            commentElement.textContent = commentText;
-            commentElement.className = "bg-light p-2 rounded mb-2";
-
-            commentsList.appendChild(commentElement);
-            newComment.value = ""; // Clear the input field
-
-            // Remove the "No comments yet" message
-            const noCommentsMessage = commentsList.querySelector(".text-muted");
-            if (noCommentsMessage) {
-                noCommentsMessage.remove();
+            if (commentText === "") {
+                alert("Please write a comment before adding.");
+                return;
             }
-        } else {
-            alert("Please write a comment before adding.");
-        }
+
+            fetch("{{ route('comments.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    vlog_id: vlogId,
+                    comment: commentText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 📌 Create New Comment Element
+                    const commentElement = document.createElement("div");
+                    commentElement.className = "card shadow-sm p-2 mb-2 border rounded";
+                    commentElement.dataset.id = data.comment.id;
+                    commentElement.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <strong class="me-2">${data.comment.user_name}</strong>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                            
+                                <i class="fas fa-trash-alt delete-comment" data-id="${data.comment.id}" ></i>
+                            
+                        </div>
+                        <p class="mb-1">${data.comment.comment}</p>
+                    `;
+
+                    commentsList.appendChild(commentElement);
+                    newComment.value = "";
+
+                    // 📌 Remove "No Comments" message
+                    const noCommentsMessage = document.getElementById("noComments");
+                    if (noCommentsMessage) {
+                        noCommentsMessage.remove();
+                    }
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        // 📌 Function to Delete a Comment (AJAX)
+        commentsList.addEventListener("click", function (e) {
+            if (e.target.closest(".delete-comment")) {
+                const deleteButton = e.target.closest(".delete-comment");
+                const commentId = deleteButton.dataset.id;
+                const commentElement = deleteButton.closest(".card");
+
+                fetch(`/comments/${commentId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (commentElement) {
+                            commentElement.remove(); // ✅ Correctly removes comment div
+                        }
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        });
     });
 </script>
-<script>
+
     
 
-    function copyLink() {
+    <!-- function copyLink() {
         const postLink = "https://example.com/post/123";
         navigator.clipboard.writeText(postLink).then(() => alert("Link copied!"));
-    }
+    } -->
 
-    function embedPost() {
-        const modal = new bootstrap.Modal(document.getElementById("embedModal"));
-        modal.show();
-    }
+   
 </script>
 
 <script>
