@@ -220,7 +220,8 @@
             <img src="https://www.ezsmartmall.com/static/ezsmart/assets/admin_css/img/undraw_profile.svg" alt="Profile" class="me-3" style="width: 50px; height: 50px; border-radius: 50%;">
             <div class="user-details">
                 <strong>{{ $vlog->user->name ?? 'Unknown' }}</strong>
-                <small class="text-muted d-block">2 minutes ago</small>
+                <small class="text-muted d-block">{{ $vlog->created_at->diffForHumans() ?? '' }}</small>
+
             </div>
         </div>
         <!-- Three-Dot Menu -->
@@ -231,8 +232,15 @@
     </button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
        
-                <li><a class="dropdown-item" href="#" onclick="copyLink()">Copy link to post</a></li>
-                <li><a class="dropdown-item" href="#" onclick="embedPost()">Delete this post</a></li>
+                <!-- <li><a class="dropdown-item" href="#" onclick="copyLink()">Copy link to post</a></li> -->
+                @if(auth()->id() === $vlog->user_id)
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteVlogModal" onclick="setDeleteForm('{{ route('vlogs.destroy', $vlog->id) }}')">
+                        Delete this post
+                    </a>
+                </li>
+            @endif
+            
     </ul>
 </div>
     </div>
@@ -312,55 +320,88 @@
 </div>
 
 <!-- Comments Section (Last Footer) -->
-<div id="commentsFooter" class="footer mt-3" style="width: 100%;">
-    <div id="commentsSection" class="mt-3" style="display: none; width: 100%;">
-        <input type="hidden" id="vlogId" value="{{ $vlog->id }}"> <!-- Vlog ID hidden input -->
-        <div class="mb-2">
-            <textarea id="newComment" class="form-control" rows="2" placeholder="Write a comment..."></textarea>
+<!-- Comments Section (Bootstrap Styled) -->
+<div id="commentsFooter" class="footer mt-3 w-100">
+    <div class="card shadow mt-3" id="commentsSection" style="display: none; width: 100%;">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Comments</h5>
+            
         </div>
-        <button id="addCommentButton" class="btn btn-primary btn-sm">Add Comment</button>
+        <div class="card-body">
+            <input type="hidden" id="vlogId" value="{{ $vlog->id }}">
 
-        <div id="commentsList" class="mt-3">
-            @if($vlog->comments->count() > 0)
-                @foreach($vlog->comments as $comment)
-                    <div class="comment-box p-2 border rounded mb-2" data-id="{{ $comment->id }}">
-                        <strong>{{ $comment->user->name }}</strong>
-                        <p class="mb-1">{{ $comment->comment }}</p>
-                        <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
-                        @if(auth()->id() === $comment->user_id)
-                            <button class="btn btn-danger btn-sm delete-comment" data-id="{{ $comment->id }}">Delete</button>
-                        @endif
-                    </div>
-                @endforeach
-            @else
-                <p class="text-muted" id="noComments">No comments yet. Be the first to comment!</p>
-            @endif
+            <!-- Comment Input Field -->
+            <div class="mb-3">
+                <textarea id="newComment" class="form-control border rounded shadow-sm" rows="2" placeholder="Write a comment..."></textarea>
+            </div>
+            <button id="addCommentButton" class="btn btn-primary btn-sm">Add Comment</button>
+
+            <!-- Comments List -->
+            <div id="commentsList" class="mt-3">
+                @if($vlog->comments->count() > 0)
+                    @foreach($vlog->comments as $comment)
+                        <div class="card shadow-sm p-2 mb-2 border rounded" data-id="{{ $comment->id }}">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <strong class="me-2">{{ $comment->user->name }}</strong>
+                                    <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                                </div>
+                            
+                                @if(auth()->id() === $comment->user_id)
+                                    <!-- <button  style="padding: 5px;font-size: 11px;" class="btn btn-light btn-sm delete-comment" data-id="{{ $comment->id }}"> -->
+                                        <i  class="fas fa-trash-alt delete-comment" data-id="{{ $comment->id }}" style="color: #000;"></i>
+                                    <!-- </button> -->
+                                @endif
+                            </div>
+                            
+                            <p class="mb-1">{{ $comment->comment }}</p>
+
+                            
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-muted text-center" id="noComments">No comments yet. Be the first to comment!</p>
+                @endif
+            </div>
         </div>
     </div>
 </div>
+
 
 
 </div>
 @endforeach
 
-<!-- Embed Modal -->
-<div class="modal fade" id="embedModal" tabindex="-1" aria-labelledby="embedModalLabel" aria-hidden="true">
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteVlogModal" tabindex="-1" aria-labelledby="deleteVlogModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="embedModalLabel">Delete this Post</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="deleteVlogModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this post
+                Are you sure you want to delete this vlog? This action cannot be undone.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="Submit" class="btn btn-danger">Delete</button>
-              </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteVlogForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+</div>
+<script>
+    function setDeleteForm(actionUrl) {
+        document.getElementById("deleteVlogForm").action = actionUrl;
+    }
+</script>
+
 
 <script>function handleLikeDislike(vlogId, type, button) {
     const likeCountElement = document.getElementById(`likeCount${vlogId}`);
@@ -519,13 +560,19 @@
                 if (data.success) {
                     // 📌 Create New Comment Element
                     const commentElement = document.createElement("div");
-                    commentElement.className = "comment-box p-2 border rounded mb-2";
+                    commentElement.className = "card shadow-sm p-2 mb-2 border rounded";
                     commentElement.dataset.id = data.comment.id;
                     commentElement.innerHTML = `
-                        <strong>${data.comment.user_name}</strong>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <strong class="me-2">${data.comment.user_name}</strong>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                            
+                                <i class="fas fa-trash-alt delete-comment" data-id="${data.comment.id}" ></i>
+                            
+                        </div>
                         <p class="mb-1">${data.comment.comment}</p>
-                        <small class="text-muted">Just now</small>
-                        <button class="btn btn-danger btn-sm delete-comment" data-id="${data.comment.id}">Delete</button>
                     `;
 
                     commentsList.appendChild(commentElement);
@@ -545,9 +592,10 @@
 
         // 📌 Function to Delete a Comment (AJAX)
         commentsList.addEventListener("click", function (e) {
-            if (e.target.classList.contains("delete-comment")) {
-                const commentId = e.target.dataset.id;
-                const commentElement = e.target.closest(".comment-box"); // 📌 Correctly selecting the div
+            if (e.target.closest(".delete-comment")) {
+                const deleteButton = e.target.closest(".delete-comment");
+                const commentId = deleteButton.dataset.id;
+                const commentElement = deleteButton.closest(".card");
 
                 fetch(`/comments/${commentId}`, {
                     method: "DELETE",
@@ -559,7 +607,7 @@
                 .then(data => {
                     if (data.success) {
                         if (commentElement) {
-                            commentElement.remove(); // ✅ Now correctly removing comment div
+                            commentElement.remove(); // ✅ Correctly removes comment div
                         }
                     } else {
                         alert("Error: " + data.error);
@@ -571,20 +619,14 @@
     });
 </script>
 
-
-
-<script>
     
 
-    function copyLink() {
+    <!-- function copyLink() {
         const postLink = "https://example.com/post/123";
         navigator.clipboard.writeText(postLink).then(() => alert("Link copied!"));
-    }
+    } -->
 
-    function embedPost() {
-        const modal = new bootstrap.Modal(document.getElementById("embedModal"));
-        modal.show();
-    }
+   
 </script>
 
 <script>
