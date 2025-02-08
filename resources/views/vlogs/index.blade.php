@@ -259,7 +259,7 @@
 
             <div class="col-4">
                 <i class="bi bi-chat text-secondary d-block"></i>
-                <span>14 comments</span>
+                <span>{{$vlog->comments->count()}} comments</span>
             </div>
             
         </div>
@@ -280,7 +280,7 @@
                    {{ $userLike && $userLike->type == 'like' ? 'btn-primary text-dark' : 'btn-light' }}">
         <i class="bi {{ $userLike && $userLike->type == 'like' ? 'bi-hand-thumbs-up-fill' : 'bi-hand-thumbs-up' }} me-2"></i> 
         {{ $userLike && $userLike->type == 'like' ? 'Liked' : 'Like' }}
-        <span id="likeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->like }}</span>
+        <!-- <span id="likeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->like }}</span> -->
     </button>
 </div>
 
@@ -291,7 +291,7 @@
                    {{ $userLike && $userLike->type == 'dislike' ? 'btn-danger text-dark' : 'btn-light' }}">
         <i class="bi {{ $userLike && $userLike->type == 'dislike' ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down' }} me-2"></i> 
         {{ $userLike && $userLike->type == 'dislike' ? 'Disliked' : 'Dislike' }}
-        <span id="dislikeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->dislike }}</span>
+        <!-- <span id="dislikeCount{{ $vlog->id }}" class="ms-2">{{ $vlog->dislike }}</span> -->
     </button>
 </div>
 
@@ -313,16 +313,33 @@
 
 <!-- Comments Section (Last Footer) -->
 <div id="commentsFooter" class="footer mt-3" style="width: 100%;">
-    <div id="commentsSection" class="mt-3" style="display: none;width: 100%;">
+    <div id="commentsSection" class="mt-3" style="display: none; width: 100%;">
+        <input type="hidden" id="vlogId" value="{{ $vlog->id }}"> <!-- Vlog ID hidden input -->
         <div class="mb-2">
             <textarea id="newComment" class="form-control" rows="2" placeholder="Write a comment..."></textarea>
         </div>
         <button id="addCommentButton" class="btn btn-primary btn-sm">Add Comment</button>
+
         <div id="commentsList" class="mt-3">
-            <p class="text-muted">No comments yet. Be the first to comment!</p>
+            @if($vlog->comments->count() > 0)
+                @foreach($vlog->comments as $comment)
+                    <div class="comment-box p-2 border rounded mb-2" data-id="{{ $comment->id }}">
+                        <strong>{{ $comment->user->name }}</strong>
+                        <p class="mb-1">{{ $comment->comment }}</p>
+                        <small class="text-muted">{{ $comment->created_at->diffForHumans() }}</small>
+                        @if(auth()->id() === $comment->user_id)
+                            <button class="btn btn-danger btn-sm delete-comment" data-id="{{ $comment->id }}">Delete</button>
+                        @endif
+                    </div>
+                @endforeach
+            @else
+                <p class="text-muted" id="noComments">No comments yet. Be the first to comment!</p>
+            @endif
         </div>
     </div>
 </div>
+
+
 </div>
 @endforeach
 
@@ -464,43 +481,98 @@
     });
 </script>
 <script>
-    const commentButton = document.getElementById("commentButton");
-    const commentsSection = document.getElementById("commentsSection");
-    const addCommentButton = document.getElementById("addCommentButton");
-    const newComment = document.getElementById("newComment");
-    const commentsList = document.getElementById("commentsList");
+    document.addEventListener("DOMContentLoaded", function () {
+        const commentButton = document.getElementById("commentButton");
+        const commentsSection = document.getElementById("commentsSection");
+        const addCommentButton = document.getElementById("addCommentButton");
+        const newComment = document.getElementById("newComment");
+        const commentsList = document.getElementById("commentsList");
+        const vlogId = document.getElementById("vlogId").value;
 
-    // Toggle comments section visibility
-    commentButton.addEventListener("click", () => {
-        if (commentsSection.style.display === "none") {
-            commentsSection.style.display = "block";
-        } else {
-            commentsSection.style.display = "none";
-        }
-    });
+        // 📌 Toggle comments section visibility when clicking the comment button
+        commentButton.addEventListener("click", function () {
+            commentsSection.style.display = commentsSection.style.display === "none" || commentsSection.style.display === "" ? "block" : "none";
+        });
 
-    // Add a new comment
-    addCommentButton.addEventListener("click", () => {
-        const commentText = newComment.value.trim();
+        // 📌 Function to Add a New Comment (AJAX)
+        addCommentButton.addEventListener("click", function () {
+            const commentText = newComment.value.trim();
 
-        if (commentText) {
-            const commentElement = document.createElement("p");
-            commentElement.textContent = commentText;
-            commentElement.className = "bg-light p-2 rounded mb-2";
-
-            commentsList.appendChild(commentElement);
-            newComment.value = ""; // Clear the input field
-
-            // Remove the "No comments yet" message
-            const noCommentsMessage = commentsList.querySelector(".text-muted");
-            if (noCommentsMessage) {
-                noCommentsMessage.remove();
+            if (commentText === "") {
+                alert("Please write a comment before adding.");
+                return;
             }
-        } else {
-            alert("Please write a comment before adding.");
-        }
+
+            fetch("{{ route('comments.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    vlog_id: vlogId,
+                    comment: commentText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 📌 Create New Comment Element
+                    const commentElement = document.createElement("div");
+                    commentElement.className = "comment-box p-2 border rounded mb-2";
+                    commentElement.dataset.id = data.comment.id;
+                    commentElement.innerHTML = `
+                        <strong>${data.comment.user_name}</strong>
+                        <p class="mb-1">${data.comment.comment}</p>
+                        <small class="text-muted">Just now</small>
+                        <button class="btn btn-danger btn-sm delete-comment" data-id="${data.comment.id}">Delete</button>
+                    `;
+
+                    commentsList.appendChild(commentElement);
+                    newComment.value = "";
+
+                    // 📌 Remove "No Comments" message
+                    const noCommentsMessage = document.getElementById("noComments");
+                    if (noCommentsMessage) {
+                        noCommentsMessage.remove();
+                    }
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        // 📌 Function to Delete a Comment (AJAX)
+        commentsList.addEventListener("click", function (e) {
+            if (e.target.classList.contains("delete-comment")) {
+                const commentId = e.target.dataset.id;
+                const commentElement = e.target.closest(".comment-box"); // 📌 Correctly selecting the div
+
+                fetch(`/comments/${commentId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (commentElement) {
+                            commentElement.remove(); // ✅ Now correctly removing comment div
+                        }
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        });
     });
 </script>
+
+
+
 <script>
     
 
