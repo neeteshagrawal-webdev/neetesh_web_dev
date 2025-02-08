@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\Uploadmaster;
+use App\Models\Message;
+use App\Models\LoginActivity;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -167,29 +169,44 @@ class UserController extends Controller
 
     public function home(){
 
-    return view('home');
+        return view('home');
     }
 
     public function login(Request $request)
     {
 
-    //dd($request->all());
-    // Validate the form input
-    $request->validate([
-    'email' => 'required|email',
-    'password' => 'required|min:4',
-    ]);
-    if(Auth::attempt([
-    'email' => $request->email,
-    'password' => $request->password,
-    ], $request->remember)){
-    return view('home');
+
+        // Validate the form input
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:4',
+        ]);
+        if(Auth::attempt([
+          'email' => $request->email,
+          'password' => $request->password,
+        ], $request->remember)){
+
+         // Store login activity
+        LoginActivity::create([
+            'user_id' => Auth::id(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+            'login_time' => now(),
+        ]);
+
+        return view('home');
     }
     echo "login failed"; die(); 
     //dd($request->all());
 
     }
+    public function messageInsert(Request $request){
 
+        $message = Message::create([
+            'message' => $request->message,
+        ]);
+        return redirect()->back()->with('success', 'Notice added successfully.');
+    }
     public function scroll_message(){
     return view('scroll_message');
     }
@@ -201,7 +218,10 @@ class UserController extends Controller
     }
     public function login_activity(){
 
-    $loginActivities = User::where('id', Auth::id())->latest()->get();
+    //$loginActivities = User::where('id', Auth::id())->latest()->get();
+
+    $loginActivities = LoginActivity::with('user')->orderBy('login_time', 'desc')->get();
+       // return view('login_activity', compact('activities'));
     //dd($loginActivities);
     return view('login_activity',compact('loginActivities'));
     }

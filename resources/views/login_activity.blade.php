@@ -30,7 +30,7 @@
                         @foreach($loginActivities as $logindata)
                         <tr>
                             <td>{{$i}}</td>
-                            <td>{{$logindata->name}}</td>
+                            <td>{{ $logindata->user ? $logindata->user->name : 'Unknown User'}}</td>
                             <td>{{$logindata->created_at}}</td>
                         </tr>
                         <?php  $i++; ?>
