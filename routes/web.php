@@ -30,5 +30,12 @@ Route::post('/uploadManual', [UserController::class, 'uploadManual'])->name('upl
 Route::get('/updateManualData/{id}', [UserController::class, 'updateManualData']);
 Route::post('/update-manual', [UserController::class, 'editManualData'])->name('uploadmanualdata.update');
 Route::delete('/deleteUpload/{id}', [UserController::class, 'deleteUploaddata'])->name('upload.delete');
+<<<<<<< HEAD
 
 
+=======
+Route::post('user/create', [UserController::class, 'userInsert'])->name('user.create');
+Route::get('/updateUserData/{id}', [UserController::class, 'updateUserData']);
+Route::post('/update/user', [UserController::class, 'editUserData'])->name('editUserdata.update');
+Route::delete('/deleteUser/{id}', [UserController::class, 'deleteUserddata'])->name('user.delete');
+>>>>>>> feature/vlog
