@@ -17,8 +17,3 @@ Route::get('/scrollMessage', [UserController::class, 'scroll_message'])->name('s
 Route::get('/users', [UserController::class, 'users_view'])->name('users.show');
 Route::get('/loginActivity', [UserController::class, 'login_activity'])->name('login.activity');
 Route::get('/report', [UserController::class, 'report_show'])->name('user.report');
-
-// Vlog routes (Agar vlog ka part add karna hai)
-Route::resource('vlogs', VlogController::class);
-Route::post('/vlogs/{id}/like', [VlogController::class, 'like'])->name('vlogs.like');
-Route::post('/vlogs/{id}/dislike', [VlogController::class, 'dislike'])->name('vlogs.dislike');
