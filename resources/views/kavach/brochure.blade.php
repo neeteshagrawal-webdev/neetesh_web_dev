@@ -6,45 +6,12 @@
 
     <!-- Page Heading -->
     <div class="card shadow mb-4">
-        
-        <div class="card-body">
-
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <div class="col-md-2">
-            <div class="form-group">
-            <label for="categoryName">User</label>
-            <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-            </div>
-            </div>
-            <div class="col-md-2">
-            <div class="form-group">
-            <label for="categoryName">Category</label>
-            <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-            </div>
-            </div>
-                <div class="col-md-2">
-            <div class="form-group">
-            <label for="categoryName">Subcategory</label>
-            <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-            </div>
-            </div>
-             <div class="col-md-2">
-            <div class="form-group">
-            <label for="categoryName">From Date</label>
-            <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-            </div>
-            </div>
-            <div class="col-md-2">
-            <div class="form-group">
-            <label for="categoryName">To Date</label>
-            <input type="text" class="form-control" id="sequence" name="sequence" placeholder="Enter sequence" value="" required>
-            </div>
-            </div>
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold " style="color: #29b853;">Kavach Brochure</h6>
             <!-- Add Button -->
-            <button class="btn  btn-sm" style="background-color: #29b853;color: white;" data-toggle="modal" >
-                Download
-            </button>
+          
         </div>
+        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" style="width:100%;font-size: 12px;" cellspacing="0">
                     <thead>
