@@ -42,7 +42,7 @@
                             <td>{{$data->status}}</td>
                             <td>{{$data->remarks}}</td>
                             <td class="text-center">
-                            <a>Time Line</a>
+                            <a href="{{url('/KMS/Timeline/'.$data->upload_id)}}">TimeLine</a>
                             </td>
                         </tr>
                         @endforeach

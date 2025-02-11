@@ -55,6 +55,9 @@ Route::get('/5G/Multimedia/',[HomeController::class, '_5G_multimedia'])->name('5
 Route::get('/Download/history/{id}', [HomeController::class, 'history_data']);
 Route::get('/Remark/{id}', [HomeController::class, 'remark']);
 Route::post('/Remark/Add/', [HomeController::class, 'remark_add']);
+Route::get('/Report/Search/',[HomeController::class, 'search_data'])->name('records.search');
+Route::get('/KMS/Timeline/{id}', [HomeController::class, 'timeline']);
+
 
 // Include Vlog Routes
 require __DIR__.'/vlog_routes.php';

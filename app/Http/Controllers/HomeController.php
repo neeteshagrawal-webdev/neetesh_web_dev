@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Uploadmaster;
-use App\Models\Users;
+use App\Models\User;
 use App\Models\DownloadHistory;
 use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
@@ -80,6 +80,13 @@ class HomeController extends Controller
         );
         return redirect()->route('kavach.brochure')->with('success', 'Updated Successfully.');
     }
+    public function timeline($id){
+
+        $userId = Auth::id();
+        $timelinedata = DownloadHistory::where('upload_id',$id )->where('user_id',$userId)->first();
+        $user = User::where('id',$timelinedata->user_id)->first();
+        return view('kavach.timeline',compact('timelinedata','user'));
+    }
     public function remark($id){
         
         $userId = Auth::id();
@@ -93,7 +100,32 @@ class HomeController extends Controller
         ->first();
         return view('kavach.edit',compact('kavachdata','id'));
     }
+    public function search_data(Request $request){
 
+        $userId = Auth::id();
+        $kavachdata = DB::table('uploadmasters')
+        ->join('downloadhistory', function($join) use ($userId) {
+        $join->on('uploadmasters.id', '=', 'downloadhistory.upload_id')
+        ->where('downloadhistory.user_id', '=', $userId);
+        });
+        if (!empty($request->category)) {
+            $kavachdata->where('uploadmasters.category', 'LIKE', '%' . $request->category . '%');
+        }
+
+        if (!empty($request->subcategory)) {
+            $kavachdata->where('uploadmasters.subcategory', 'LIKE', '%' . $request->subcategory . '%');
+        }
+
+        if (!empty($request->from_date) && !empty($request->to_date)) {
+            $kavachdata->whereBetween('downloadhistory.created_at', [$request->from_date, $request->to_date]);
+        }
+
+        $kavachdata = $kavachdata->select('uploadmasters.*', 'downloadhistory.*')->first();
+        //dd($kavachdata);
+        return response()->json([$kavachdata]); // Return JSON response
+       // dd($kavachdata);
+
+    }
 
     public function lte_index(){
         return view('lte.index');

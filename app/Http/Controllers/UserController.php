@@ -227,10 +227,11 @@ class UserController extends Controller
     }
     public function report_show(){
 
+        $users = User::get();
 
-    /*$category = Category::get();
-    dd($category);*/
-    return view('report');
+        /*$category = Category::get();
+        dd($category);*/
+        return view('report',compact('users'));
     }
 
 
