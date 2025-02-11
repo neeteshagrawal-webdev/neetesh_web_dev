@@ -52,7 +52,9 @@ Route::get('/5G/advisories/',[HomeController::class, '_5G_advisories'])->name('5
 Route::get('/5G/Multimedia/',[HomeController::class, '_5G_multimedia'])->name('5G.multimedia');
 
 
-
+Route::get('/Download/history/{id}', [HomeController::class, 'history_data']);
+Route::get('/Remark/{id}', [HomeController::class, 'remark']);
+Route::post('/Remark/Add/', [HomeController::class, 'remark_add']);
 
 // Include Vlog Routes
 require __DIR__.'/vlog_routes.php';

@@ -7,43 +7,50 @@
     <!-- Page Heading -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold " style="color: #29b853;">LTE Brochure</h6>
+            <h6 class="m-0 font-weight-bold " style="color: #29b853;">Kavach Brochure</h6>
             <!-- Add Button -->
-       
-        </div>
+       </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" style="width:100%;font-size: 12px;" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Sr.No.</th>
-                            <th>Question</th>
-                            <th>Answer</th>
-                            <th>Sequence</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th>Letter Date</th>
+                            <th>Letter Number</th>
+                            <th>Priority</th>
+                            <th>Subject Of Letter</th>
+                            <th>Tentative date as Given by Zonel Railways </th>
+                            <th>Status</th>
+                            <th>User Remark</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Example Row -->
-                        
+                        @foreach($kavachdata as $data)
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>1</td>
+                            <td>{{$data->letter_date}}</td>
+                            <td>{{$data->letter_nuber}}</td>
+                            <td>{{$data->priority}}</td>
+                            <td>{{$data->subject_of_letter}}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#editCategoryModal1__id">
+                                <a href="{{ url('Download/history/'.$data->id) }}" class="btn btn-sm btn-primary" ><i class="fa fa-eye"></i></a>
+
+                                <a href="{{ url('Remark/'.$data->id) }}" class="btn btn-sm btn-success" >
                                     <i class="fas fa-edit"></i>
-                                </button>
-                            </td>
-                            <td class="text-center">
+                                </a>
+               
                                 <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCategoryModal1__id">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-            
+                        @endforeach
                        
                     </tbody>
                 </table>

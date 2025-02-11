@@ -1,52 +1,52 @@
+ 
 @include('includes.header')
+ 
 <!-- Begin Page Content -->
 <div class="container-fluid">
+
     <!-- Page Heading -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
+
             <h6 class="m-0 font-weight-bold " style="color: #29b853;">Kavach Brochure</h6>
             <!-- Add Button -->
-       </div>
+            <p>Letter Date:{{$kavachdata->letter_date}}</p>
+            <p>Letter Number:{{$kavachdata->letter_number}}</p>
+            <p>Subject Of Letter:{{$kavachdata->subject_of_letter}}</p>
+             <a id="btnPrint" onclick="printTable()" class="btn btn-warning" style="float:right;" download><span>Download</span><i class="fa fa-download"></i> </a>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" style="width:100%;font-size: 12px;" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Sr.No.</th>
-                            <th>Letter Date</th>
-                            <th>Letter Number</th>
-                            <th>Priority</th>
-                            <th>Subject Of Letter</th>
+                            <th>User</th>
+                            <th>Seen Status</th>
+                            <th>Seen At</th>
                             <th>Tentative date as Given by Zonel Railways </th>
                             <th>Status</th>
-                            <th>User Remark</th>
+                            <th>Remark</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Example Row -->
-                        @foreach($kavachdata as $data)
+                        @foreach($users as $data)
                         <tr>
                             <td>1</td>
-                            <td>{{$data->letter_date}}</td>
-                            <td>{{$data->letter_nuber}}</td>
-                            <td>{{$data->priority}}</td>
-                            <td>{{$data->subject_of_letter}}</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td>{{$data->name}}</td>
+                            <td>{{ $data->seen_status == 1 ? 'yes' : 'no' }}</td>
+                            <td>{{$data->created_at}}</td>
+                            <td>{{$data->date_for_action}}</td>
+                            <td>{{$data->status}}</td>
+                            <td>{{$data->remarks}}</td>
                             <td class="text-center">
-                                <a href="{{ url('Download/history/'.$data->id) }}" class="btn btn-sm btn-primary" ><i class="fa fa-eye"></i></a>
-
-                                <a href="{{ url('Remark/'.$data->id) }}" class="btn btn-sm btn-success" >
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteCategoryModal1__id">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <a>Time Line</a>
                             </td>
                         </tr>
                         @endforeach
+                       
                     </tbody>
                 </table>
             </div>
@@ -160,3 +160,19 @@
 
 @include('includes.footer')
 
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+
+    // Custom Print Function
+    function printTable() {
+        var printContents = document.getElementById("dataTable").outerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = "<html><head><title>Print Table</title></head><body>" + printContents + "</body></html>";
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload(); // Reload page to restore functionality after print
+    }
+</script>
