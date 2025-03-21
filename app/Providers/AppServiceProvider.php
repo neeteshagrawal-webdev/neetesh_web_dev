@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\Message;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -20,5 +20,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        // Fetch the latest message from the database
+        $latestMessage = Message::latest()->first();
+
+        // Share the message globally
+        View::share('latestMessage', $latestMessage);
     }
 }

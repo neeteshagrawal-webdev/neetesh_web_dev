@@ -6,11 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-class User extends Authenticatable
+use Illuminate\Auth\Passwords\CanResetPassword;
+class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +24,13 @@ class User extends Authenticatable
         'role',
         'designation',
         'zone',
+        'user_group',
+        'subgroup',
+        'department',
+        'status',
+        'password_status',
+        'genrate_password',
+        'image',
         'phone_number'
     ];
 
@@ -49,4 +56,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function userGroup()
+    {
+        return $this->belongsTo(UserGroup::class, 'user_group', 'id');
+    }
+
+  
+    public function sub_group()
+    {
+        return $this->belongsTo(UserSubGroup::class, 'subgroup', 'id');
+    }
+      
 }

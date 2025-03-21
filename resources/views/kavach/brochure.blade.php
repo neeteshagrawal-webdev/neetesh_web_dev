@@ -1,9 +1,17 @@
  
 @include('includes.header')
  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 <!-- Begin Page Content -->
 <div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
 
+</div>
+     
     <!-- Page Heading -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
@@ -28,30 +36,38 @@
                     </thead>
                     <tbody>
                         <!-- Example Row -->
+                        @if(empty($kavachdata))
+                        <p>No data available</p>
+                        @else
                         @foreach($kavachdata as $data)
                         <tr>
                             <td>1</td>
                             <td>{{$data->letter_date}}</td>
-                            <td>{{$data->letter_nuber}}</td>
+                            <td>{{$data->letter_number}}</td>
                             <td>{{$data->priority}}</td>
                             <td>{{$data->subject_of_letter}}</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td>{{$data->date_for_action}}</td>
+                            <td>{{$data->status}}</td>
+                            <td>{{$data->remarks}}</td>
                             <td class="text-center">
                                 <a href="{{ url('Download/history/'.$data->id) }}" class="btn btn-sm btn-primary" ><i class="fa fa-eye"></i></a>
 
-                                <a href="{{ url('Remark/'.$data->id) }}" class="btn btn-sm btn-success" >
+                                <a href="{{ url('Remark/'.$data->upload_id) }}" class="btn btn-sm btn-success" >
                                     <i class="fas fa-edit"></i>
                                 </a>
                
-                                <a class="btn btn-sm btn-primary" href="{{ asset('storage/' . $data->upload_file) }}"  target="_blank" download>
+                                <a class="btn btn-sm btn-primary" href="{{ asset($data->upload_file) }}"  target="_blank" download>
                                     <i class="fa fa-download"></i>
-                                </a>
+                                </a></br>
+                                 <a href="{{ asset($data->upload_file) }}" class="disclosure-item" target="_blank">
+                        <div class="icon-box"><i class="bi bi-eye text-light"></i></div>
+                        View pdf
+                    </a>
+                             
                             </td>
                         </tr>
                         @endforeach
-                       
+                       @endif
                     </tbody>
                 </table>
             </div>
@@ -160,8 +176,40 @@
 </div>
 <!-- End of Add Category Modal -->
 </div>
+
+<!-- PDF Modal -->
+<div id="pdfModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <iframe id="pdfFrame" src="" width="100%" height="500px"></iframe>
+    </div>
+</div>
 <!-- /.container-fluid -->
 
 
 @include('includes.footer')
+
+<script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>
+<!-- jQuery for Modal -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".view-pdf").on("click", function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            var pdfUrl = $(this).data("url"); // Get PDF URL from data attribute
+
+            $("#pdfFrame").attr("src", pdfUrl); // Set iframe source
+            $("#pdfModal").fadeIn(); // Show modal
+        });
+
+        $(".close").on("click", function () {
+            $("#pdfModal").fadeOut(); // Hide modal
+        });
+    });
+</script>
 

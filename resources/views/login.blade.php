@@ -127,11 +127,12 @@ padding-right: 12px;
 font-size: 20px;
 }
 .container .twitter a{
-background: linear-gradient(to right,  #00acee 0%, #1abeff 100%);
-margin: 20px 0 15px 0;
+    text-align:center;
+background: linear-gradient(to right, #389ed1 0%, #30a1d7 100%);
+/*margin: 20px 0 15px 0;*/
 }
 .container .twitter a:hover{
-background: linear-gradient(to left,  #00acee 0%, #1abeff 100%);
+background: linear-gradient(to right, #389ed1 0%, #30a1d7 100%);
 margin: 20px 0 15px 0;
 }
 .container .facebook a{
@@ -142,7 +143,9 @@ margin: 20px 0 50px 0;
 background: linear-gradient( to left,  #3b5998 0%, #476bb8 100%);
 margin: 20px 0 50px 0;
 }
-
+.error{
+  color:red;
+}
 /* Only for desktop (1024px and above) */
 @media screen and (min-width: 1024px) {
 .container {
@@ -161,22 +164,56 @@ margin-left: -600px; /* Adjust as needed */
     <div class="input-box underline">
     <input type="text" name="email" placeholder="Enter Your Email" required>
     <div class="underline"></div>
+    @error('email')
+        <span class="text-danger error">{{ $message }}</span>
+    @enderror
     </div>
     <div class="input-box">
-    <input type="password" name="password" placeholder="Enter Your Password" required>
+    <input type="password" id="password" name="password" placeholder="Enter Your Password" required>
+    <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+            <i class="fas fa-eye"></i>
+        </button>
     <div class="underline"></div>
+    @error('password')
+        <span class="text-danger error">{{ $message }}</span>
+    @enderror
     </div>
     <div class="input-box button">
     <input type="submit" name="" value="Login">
+
+
     </div>
   </form>
-  <!-- <div class="option">Forget Password?</div>
-  <div class="twitter">
-  <a href="#"><i class="fab fa-twitter"></i>Sign in With Twitter</a>
+ 
+  <!--<div class="signup">-->
+  <!--  <a href="{{route('user.signup')}}">Sign Up</a>-->
+  <!--</div>-->
+   <!--<div class="option">Forget Password?</div>-->
+  <div class="twitter signup">
+ <a href="{{route('user.signup')}}">Sign Up</a>
   </div>
-  <div class="facebook">
-  <a href="#"><i class="fab fa-facebook-f"></i>Sign in With Facebook</a>
-  </div> -->
+  <a href="{{route('password.request')}}">Forgot Password</a>
+  <!--<div class="facebook">-->
+  <!--<a href="#"><i class="fab fa-facebook-f"></i>Sign in With Facebook</a>-->
+  <!--</div> -->
   </div>
 </body>
 </html>
+<!-- Include FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            let passwordField = document.getElementById('password');
+            let icon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
+</script>

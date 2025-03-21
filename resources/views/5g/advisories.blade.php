@@ -1,7 +1,15 @@
 @include('includes.header')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 <!-- Begin Page Content -->
 <div class="container-fluid">
-    <!-- Page Heading -->
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
+
+</div>
+
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold " style="color: #29b853;">Kavach Brochure</h6>
@@ -159,4 +167,10 @@
 
 
 @include('includes.footer')
+
+  <script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>
 

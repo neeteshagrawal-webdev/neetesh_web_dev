@@ -6,17 +6,92 @@ use Illuminate\Http\Request;
 use App\Models\Uploadmaster;
 use App\Models\User;
 use App\Models\DownloadHistory;
+use App\Models\Overview;
 use Illuminate\Support\Facades\Auth;
+//use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Hash;
 class HomeController extends Controller
 {
     //
+
+    public function updateProfileimage(Request $request){
+
+    $user = auth()->user();
+
+    // Validate the request
+    $request->validate([
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate image file
+    ]);
+
+    // Handle file upload
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension(); // Rename the image
+        $imagePath = 'profile_images/' . $imageName; // Define image path
+
+        // Move the uploaded file to the public/profile_images directory
+        $image->move(public_path('profile_images'), $imageName);
+
+        // Delete old image if exists (except default one)
+        if ($user->image && file_exists(public_path($user->image))) {
+            unlink(public_path($user->image));
+        }
+
+        // Save new image path in database
+        $user->image = $imagePath;
+    }
+
+    $user->save();
+
+    return back()->with('success', 'Profile Image updated successfully!');
+        
+    }
+
+    Public function change_password(Request $request){
+
+        $request->validate([
+            'current_password' => ['required'],
+            'new_password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()],
+            'confirm_password' => ['required', 'same:new_password'],
+        ]);
+
+        $user = Auth::user();
+
+        // Check if current password matches
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        // Update password
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return back()->with('success', 'Password updated successfully.');
+    }
+    public function profile(){
+        
+        $user_id = Auth::id();
+        $userData = User::with(['userGroup', 'sub_group'])->where('id',$user_id)->first();
+
+        $user_id = Auth::id(); // Get the authenticated user ID
+        if ($user_id) { 
+            $userData = User::with(['userGroup', 'sub_group'])->find($user_id); 
+        } else {
+            $userData = null; // No user logged in
+        }
+        //dd($userData);
+        return view('user_profile',compact('userData'));
+    }
     public function kavach_index(){
 
         return view('kavach.kavach');
     }
     public function kavach_overview(){
 
-        return view('kavach.overview');
+        $overviews = Overview::where('type', 'Kavach')->get();
+        return view('kavach.overview', compact('overviews'));
     }
     public function kavach_multimedia(){
 
@@ -25,18 +100,32 @@ class HomeController extends Controller
     public function kavach_brochure(Request $request)
     {
         $segments = $request->segments();
-        $kavachdata = Uploadmaster::whereRaw('LOWER(category) = ?', [strtolower('kavach')])
+     $kavachdata = Uploadmaster::whereRaw('LOWER(category) = ?', [strtolower('kavach')])
                ->whereRaw('LOWER(subcategory) = ?', [strtolower('Brochure')])
+               ->orderBy('created_at', 'desc') // Order by newest first
                ->get();
+      /*  $kavachdata = Uploadmaster::join('downloadhistory', 'uploadmasters.id', '=', 'downloadhistory.upload_id')
+        ->whereRaw('LOWER(uploadmasters.category) = ?', [strtolower('kavach')])
+        ->whereRaw('LOWER(uploadmasters.subcategory) = ?', [strtolower('Brochure')])
+        ->select('uploadmasters.*', 'downloadhistory.*') // Adjust as per required columns
+        ->get();*/
+        //dd($kavachdata);
         return view('kavach.brochure',compact('kavachdata'));
     }
     public function kavach_advisories(Request $request)
     {
 
         $segments = $request->segments();
-        $kavachdata = Uploadmaster::whereRaw('LOWER(category) = ?', [strtolower('kavach')])
-               ->whereRaw('LOWER(subcategory) = ?', [strtolower('advisories')])
-               ->get();
+        //$kavachdata = Uploadmaster::whereRaw('LOWER(category) = ?', [strtolower('kavach')])
+              // ->whereRaw('LOWER(subcategory) = ?', [strtolower('advisories')])
+              // ->get();
+        $kavachdata = Uploadmaster::join('downloadhistory', 'uploadmasters.id', '=', 'downloadhistory.upload_id')
+        ->whereRaw('LOWER(uploadmasters.category) = ?', [strtolower('kavach')])
+        ->whereRaw('LOWER(uploadmasters.subcategory) = ?', [strtolower('Brochure')])
+        ->select('uploadmasters.*', 'downloadhistory.*') // Adjust as per required columns
+        ->orderBy('uploadmasters.id', 'DESC') // Add DESC order
+        ->get();
+        //dd($kavachdata);
         return view('kavach.advisories',compact('kavachdata'));
     }
 
@@ -78,7 +167,17 @@ class HomeController extends Controller
                 'updated_at' => now()             
             ]
         );
-        return redirect()->route('kavach.brochure')->with('success', 'Updated Successfully.');
+        $uploaddata = Uploadmaster::where('id',$uploadId)->first();
+        //dd($uploaddata->subcategory);
+        
+        if($uploaddata->subcategory == 'Brochure'){
+
+           return redirect()->route('kavach.brochure')->with('success', 'Updated Successfully.');
+        }elseif($uploaddata->subcategory == 'Advisories'){
+            return redirect()->route('kavach.advisories')->with('success', 'Updated Successfully.');
+        }else{
+            return redirect()->route('kavach.brochure')->with('success', 'Updated Successfully.');
+        }
     }
     public function timeline($id){
 
@@ -90,14 +189,15 @@ class HomeController extends Controller
     public function remark($id){
         
         $userId = Auth::id();
+
         $kavachdata = DB::table('uploadmasters')
-        ->join('downloadhistory', function($join) use ($userId, $id) {
+        ->leftJoin ('downloadhistory', function($join) use ($id) {
         $join->on('uploadmasters.id', '=', 'downloadhistory.upload_id')
-        ->where('downloadhistory.user_id', '=', $userId)
-        ->where('downloadhistory.upload_id', '=', $id);
+       ->where('downloadhistory.upload_id', '=', $id);
         })
         ->select('uploadmasters.*', 'downloadhistory.*')
         ->first();
+       // dd($kavachdata);
         return view('kavach.edit',compact('kavachdata','id'));
     }
     public function search_data(Request $request){
@@ -131,14 +231,18 @@ class HomeController extends Controller
         return view('lte.index');
     }
     public function lte_overview(){
-        return view('lte.overview');
+
+        $overviews = Overview::where('type', 'Lte')->get();
+        return view('lte.overview', compact('overviews'));
+        //return view('lte.overview');
     }
     public function lte_brochure(Request $request){
 
         $segments = $request->segments();
         $kavachdata = Uploadmaster::whereRaw('LOWER(category) = ?', [strtolower('lte')])
-               ->whereRaw('LOWER(subcategory) = ?', [strtolower('Brochure')])
-               ->get();
+    ->whereRaw('LOWER(subcategory) = ?', [strtolower('Brochure')])
+    ->orderBy('id', 'DESC') // Add DESC order
+    ->get();
         return view('lte.brochure',compact('kavachdata'));
     }
     public function lte_advisories(Request $request){
@@ -162,7 +266,10 @@ class HomeController extends Controller
         return view('5g.index');
     }
     public function _5G_overview(){
-        return view('5g.overview');
+
+        $overviews = Overview::where('type', '5G')->get();
+        //return view('lte.overview', compact('overviews'));
+        return view('5g.overview', compact('overviews'));
 
     }
     public function _5G_brochure(Request $request){
@@ -186,6 +293,12 @@ class HomeController extends Controller
     public function _5G_multimedia(Request $request)
     {
         
+    }
+    
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
     }
 
 

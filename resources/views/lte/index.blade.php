@@ -1,7 +1,14 @@
 @include('includes.header')
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+<!-- Begin Page Content -->
+<div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
+
+</div>
                   <!-- Page Heading -->
                   <div class="d-sm-flex align-items-center justify-content-between mb-4">
                       <h1 class="h3 mb-0 text-gray-800">LTE</h1>
@@ -118,3 +125,8 @@
                       </div>
                   </div>
  @include('includes.footer')
+ <script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>

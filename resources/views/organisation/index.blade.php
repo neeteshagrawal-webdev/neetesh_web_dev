@@ -1,7 +1,14 @@
 @include('includes.header')
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+<!-- Begin Page Content -->
+<div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
+
+</div>
         <div class="container mt-4 chart-container">
              <h2 style="font-weight: bold;
     color: black;
@@ -275,3 +282,8 @@
         }
     </style>
 @include('includes.footer')
+<script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>

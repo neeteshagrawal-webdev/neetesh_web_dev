@@ -1,16 +1,36 @@
  
 @include('includes.header')
  
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 <!-- Begin Page Content -->
 <div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
 
-    <!-- Page Heading -->
+</div>
+
+
+
+
+
+
+
+<!-- Page Heading -->
     <div class="card shadow mb-4">
-        
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold " style="color: #003366;">Select Details</h6>
+            <!-- Add Button -->
+            
+        </div>
+      
         <div class="card-body">
-
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <div class="col-md-2">
+          	<div id="error-message"></div>
+          			 <div class="row">
+					  <div class="col-md-3">
             <div class="form-group">
             <label for="categoryName">User</label>
             
@@ -22,7 +42,7 @@
             </select>
             </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
             <div class="form-group">
             <label for="categoryName">Category</label>
                 <select class="form-control" id="category_name" name="category" required>
@@ -33,7 +53,7 @@
                 </select>
             </div>
             </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
             <div class="form-group">
             <label for="categoryName">Subcategory</label>
                 <select class="form-control" id="subcategory_name" name="subcategory" required>
@@ -44,28 +64,47 @@
                 </select>
             </div>
             </div>
-             <div class="col-md-2">
+             <div class="col-md-3">
             <div class="form-group">
             <label for="categoryName">From Date</label>
             <input type="date" class="form-control" id="from_date" name="from_date" placeholder="Enter sequence" value="" required>
             </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
             <div class="form-group">
             <label for="categoryName">To Date</label>
             <input type="date" class="form-control" id="to_date" name="to_date" placeholder="Enter sequence" value="" required>
             </div>
             </div>
-            <div class="form-group">
+            <div class="col-md-3">
+           
                 <label>Search</label>
-                <button id="idgetdata" class="btn btn-success form-control"><i class="fa fa-search"></i></button>
+                <button id="idgetdata" class="btn form-control" style="background-color: #003366; color: white;"><i class="fa fa-search"></i></button>
+           
             </div>
-            <!-- Add Button -->
-            <button class="btn  btn-sm" style="background-color: #29b853;color: white;" data-toggle="modal" >
-                Download
-            </button>
+            <div class="col-md-3" style="margin-top:31px">
+           
+                <button  class="btn form-control" style="background-color: #003366; color: white;"  data-toggle="modal" >Download</button>
+           
+            </div>
+						</div>
+          	
         </div>
-            <div class="table-responsive">
+    </div>
+
+
+
+
+<!-- Page Heading -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold " style="color: #003366;">Select Details</h6>
+            <!-- Add Button -->
+            
+        </div>
+      
+        <div class="card-body">
+          	  <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" style="width:100%;font-size: 12px;" cellspacing="0">
                     <thead>
                         <tr>
@@ -84,8 +123,14 @@
                     </tbody>
                 </table>
             </div>
+						</div>
+          	
         </div>
     </div>
+
+
+
+
    
 
 
@@ -156,6 +201,11 @@
         // Load initial data
         fetchData();
     });
+</script>
+<script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
 </script>
 
 

@@ -17,13 +17,14 @@ rel="stylesheet">
 <link href="{{asset('assets/admin_css/css/sb-admin-2.min.css')}}" rel="stylesheet">
 <!-- Custom styles for this page -->
 <link href="{{asset('assets/admin_css/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 <link rel="icon" type="image/x-icon" href="{{ asset('assets/admin_css/img/logoSnT2.png')}}">
 <style>
 .page-item.active .page-link {
     z-index: 3;
     color: #fff;
-    background-color: #7c2749 !important;
-    border-color: #7c2749 !important;
+    background-color: #003366 !important;
+    border-color: #003366 !important;
 }
 .navbar-nav {
     line-height: 1; /* Default for desktop */
@@ -52,7 +53,7 @@ rel="stylesheet">
 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
 <div class="sidebar-brand-icon rotate-n-0">
 <!-- <i class="fas fa-laugh-wink"></i> -->
-<img style="width:60px;" src="{{ asset('assets/admin_css/img/logoSnT2.png')}}" alt=" Logo">
+<img style="width:60px;border-radius: 5px;" src="{{ asset('assets/admin_css/img/logoSnT2.png')}}" alt=" Logo">
 </div>
 <div class="sidebar-brand-text mx-3" style="font-size: 1.8rem;"></div>
 </a>
@@ -76,10 +77,13 @@ General
     </a>
     <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{route('uploads.show')}}">Uploads</a>
+            
             <a class="collapse-item" href="{{route('scroll.message')}}">Scroll Message</a>
             <a class="collapse-item" href="{{route('users.show')}}">User</a>
+            <a class="collapse-item" href="{{route('usergroups.show')}}">User Groups</a>
+            <a class="collapse-item" href="{{route('usersubgroups.show')}}">Sub Groups</a>
             <a class="collapse-item" href="{{route('login.activity')}}">Login Activity</a>
+            <a class="collapse-item" href="{{route('upload.show')}}">Uploads</a>
         </div>
     </div>
 </li>   
@@ -89,7 +93,44 @@ General
         <span>Reports</span>
     </a>
 </li>
-
+<!-- <li class="nav-item">
+    <a class="nav-link" href="{{route('overview.index')}}">
+        <i class="fas fa-layer-group"></i> <!-- Category icon 
+        <span>OverView</span>
+    </a>
+</li> -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefour"
+    aria-expanded="true" aria-controls="collapseTwo">
+        <i class="fas fa-th-large"></i>
+        <span>OverView</span>
+    </a>
+    <div id="collapsefour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="{{route('overview.index')}}">View</a>
+            <a class="collapse-item" href="{{route('overview.create')}}">Create</a>
+          <!--   <a class="collapse-item" href="{{route('users.show')}}">User</a>
+            <a class="collapse-item" href="{{route('usergroups.show')}}">User Groups</a>
+            <a class="collapse-item" href="{{route('login.activity')}}">Login Activity</a> -->
+        </div>
+    </div>
+</li>   
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsefive"
+    aria-expanded="true" aria-controls="collapseTwo">
+        <i class="fas fa-th-large"></i>
+        <span>Manage Blog</span>
+    </a>
+    <div id="collapsefive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="{{route('blog.show')}}">View</a>
+           <!--  <a class="collapse-item" href="{{route('overview.create')}}">Create</a> -->
+          <!--   <a class="collapse-item" href="{{route('users.show')}}">User</a>
+            <a class="collapse-item" href="{{route('usergroups.show')}}">User Groups</a>
+            <a class="collapse-item" href="{{route('login.activity')}}">Login Activity</a> -->
+        </div>
+    </div>
+</li>
 
 <!--{% comment %} <li class="nav-item">-->
 <!--    <a class="nav-link" href="">-->
@@ -358,15 +399,15 @@ aria-describedby="basic-addon2">
 
 
 
-<!-- Nav Item - Messages -->
+<!--
 <li class="nav-item dropdown no-arrow mx-1">
 <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 <i class="fas fa-envelope fa-fw"></i>
-<!-- Counter - Messages -->
+
 <span class="badge badge-danger badge-counter">7</span>
 </a>
-<!-- Dropdown - Messages -->
+
 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
 aria-labelledby="messagesDropdown">
 <h6 class="dropdown-header">
@@ -378,11 +419,7 @@ Message Center
 alt="...">
 <div class="status-indicator bg-success"></div>
 </div>
-<div class="font-weight-bold">
-<div class="text-truncate">Hi there! I am wondering if you can help me with a
-problem I've been having.</div>
-<div class="small text-gray-500">Emily Fowler 路 58m</div>
-</div>
+
 </a>
 <a class="dropdown-item d-flex align-items-center" href="#">
 <div class="dropdown-list-image mr-3">
@@ -422,7 +459,7 @@ told me that people say this to all dogs, even if they aren't good...</div>
 </a>
 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
 </div>
-</li>
+</li>-->
 
 <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -431,7 +468,7 @@ told me that people say this to all dogs, even if they aren't good...</div>
 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-<span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+<span class="mr-2 d-none d-lg-inline text-gray-600 small">{{Auth::user()->name}} {{Auth::user()->designation}}</span>
 
 <img class="img-profile rounded-circle"
 src="{{asset('assets/admin_css/img/undraw_profile.svg')}}">
@@ -439,20 +476,13 @@ src="{{asset('assets/admin_css/img/undraw_profile.svg')}}">
 <!-- Dropdown - User Information -->
 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
 aria-labelledby="userDropdown">
-<!-- <a class="dropdown-item" href="#">
-<i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+<a class="dropdown-item" href="{{route('profile.show')}}" >
+<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
 Profile
 </a>
-<a class="dropdown-item" href="#">
-<i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-Settings
-</a>
-<a class="dropdown-item" href="#">
-<i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-Activity Log
-</a>
-<div class="dropdown-divider"></div> -->
-<a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+<div class="dropdown-divider"></div>
+<!--<a class="dropdown-item" href="{{route('logout')}}" data-toggle="modal" data-target="#logoutModal">-->
+<a class="dropdown-item" href="{{route('logout')}}" >
 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
 Logout
 </a>

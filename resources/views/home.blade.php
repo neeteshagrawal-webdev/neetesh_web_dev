@@ -1,7 +1,15 @@
 @include('includes.header')
-
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 <!-- Begin Page Content -->
 <div class="container-fluid">
+
+
+<!-- <div class="col-md-2">
+    <a class="btn" href="{{ route('home') }}" style="font-size: 18px; background-color: #003366; color: white; padding: 10px 20px; border-radius: 8px;">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div> -->
 
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -112,7 +120,7 @@ Click Here <i class="fas fa-arrow-right"></i>
 </div>
 <div class="row no-gutters align-items-center">
 <div class="col-auto">
-<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"> <a style="font-size: 16px;" href="#" class="text-info font-weight-bold">
+<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"> <a style="font-size: 16px;" href="{{url('vlogs')}}" class="text-info font-weight-bold">
 Click Here <i class="fas fa-arrow-right"></i>
 </a></div>
 </div>
@@ -172,44 +180,52 @@ aria-labelledby="dropdownMenuLink">
 </div> -->
 
 
-<!-- Content Row -->
-<div class="row">
 
 
-<!-- Marquee Text Section -->
-<div class="col-xl-12 col-lg-12 col-12">
+
+
+
+</div>
+
+</div>
+
 <div class="latest-update-container">
-<!--<span>馃摙 Latest Update:</span>-->
-<span class="marquee-text">This is Center of Excellence IRISET - Modern Signalling (Kavach) & Telecom.</span>
-</div>
-</div>
+
+<span class="marquee-text">{{ $latestMessage->message ?? 'No messages available' }}</span>
 </div>
 
-
-
-
-</div>
-</div>
 
 <style>
 .latest-update-container {
-background-color: #003366;
-color: white;
-padding: 10px 20px;
-font-size: 18px;
-font-weight: bold;
-overflow: hidden;
-white-space: nowrap;
-position: relative;
+    background-color: #003366;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+    /*position: fixed; */
+    bottom: 100px;
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 9999; /* Ensure it stays on top */
 }
+
 .marquee-text {
-display: inline-block;
-white-space: nowrap;
-animation: marquee 10s linear infinite;
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 10s linear infinite;
 }
+
 @keyframes marquee {
-from { transform: translateX(100%); }
-to { transform: translateX(-100%); }
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
 }
+
 </style>    
 @include('includes.footer')
+<script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>

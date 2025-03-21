@@ -1,19 +1,45 @@
 @include('includes.header')
 
- <!-- Begin Page Content -->
-                <div class="container-fluid">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+<!-- Begin Page Content -->
+<div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
+
+</div>
       <div class="container">
         <div class="card-custom">
             <div class="card-header">
                 <i class="fas fa-broadcast-tower"></i> LTE (Telecommunication) Overview
             </div>
+            @foreach($overviews as $overview)
+        <div class="card mb-4">
             <div class="card-body">
-                <img src="{{asset('assets/admin_css/kavach_img/4G_LTE.jpg')}}" alt="LTE Image">
-                <p><i class="fas fa-satellite-dish icons"></i> LTE stands for Long-Term Evolution and is a registered trademark owned by ETSI (European Telecommunications Standards Institute) for the wireless data communications technology and a development of the GSM/UMTS standards. The goal of LTE was to increase the capacity and speed of wireless data networks using new DSP (digital signal processing) techniques and modulations.</p>
+                <h3>{{ $overview->title }}</h3>
 
-                <p><i class="fas fa-network-wired icons"></i> The idea of LTE was first proposed in 1998, with research intensifying in 2004 by Japan's NTT Docomo. By 2007, the LTE/SAE Trial Initiative (LSTI) was established as a global collaboration between vendors and operators, ensuring the global introduction of this technology.</p>
+              
+                {{-- Check if media exists before rendering --}}
+                @if(!empty($overview->media))
+                    @if($overview->media_type === 'image')
+                        <img src="{{ asset('storage/' . $overview->media) }}" alt="Overview Image" class="img-fluid mt-2">
+                    @elseif($overview->media_type === 'video')
+                        <video width="100%" controls class="mt-2">
+                            <source src="{{ asset('storage/' . $overview->media) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    @endif
+                @endif
+                  {{-- Properly display CKEditor content without escaping HTML --}}
+                <p>{!! $overview->content !!}</p>
+
+                {{-- Delete Button with Confirmation --}}
+          
             </div>
+        </div>
+    @endforeach
         </div>
     </div>
     
@@ -66,3 +92,8 @@
                       </div>
                   </div>
                   @include('includes.footer')
+                  <script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>

@@ -9,7 +9,7 @@ class Vlog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'image', 'like', 'dislike', 'user_id'];
+    protected $fillable = ['title', 'description', 'image','pdf','video','like','status','dislike', 'user_id','share_user_ids'];
 
 
     public function user()

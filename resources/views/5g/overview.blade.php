@@ -1,26 +1,45 @@
 @include('includes.header')
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+      <div class="col-md-2 mb-3">
+<button onclick="goBack()" class="btn" style="font-size: 18px; background-color: #003366; color: white;  padding: 10px 20px; border-radius: 8px;">
+   <i class="bi bi-arrow-left"></i> Back
+</button>
+
+</div>
 
       <div class="container">
         <div class="card card-custom">
             <div class="card-header" style="background: #003366;">
                 <i class="fas fa-wifi"></i> 5G Network Overview
             </div>
+              @foreach($overviews as $overview)
+        <div class="card mb-4">
             <div class="card-body">
-                <p><i class="fas fa-signal icons"></i> 5G networks are cellular networks, in which the service area is divided into small geographical areas called cells. All 5G wireless devices in a cell communicate by radio waves with a cellular base station via fixed antennas, over frequencies assigned by the base station. The base stations, termed nodes, are connected to switching centers in the telephone network and routers for Internet access by high-bandwidth optical fiber or wireless backhaul connections. As in other cellular networks, a mobile device moving from one cell to another is automatically handed off seamlessly.</p>
+                <h3>{{ $overview->title }}</h3>
 
-                <p><i class="fas fa-network-wired icons"></i> The industry consortium setting standards for 5G, the 3rd Generation Partnership Project (3GPP), defines "5G" as any system using 5G NR (5G New Radio) software — a definition that came into general use by late 2018. 5G continues to use OFDM encoding.</p>
+              
+                {{-- Check if media exists before rendering --}}
+                @if(!empty($overview->media))
+                    @if($overview->media_type === 'image')
+                        <img src="{{ asset('storage/' . $overview->media) }}" alt="Overview Image" class="img-fluid mt-2">
+                    @elseif($overview->media_type === 'video')
+                        <video width="100%" controls class="mt-2">
+                            <source src="{{ asset('storage/' . $overview->media) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    @endif
+                @endif
+                  {{-- Properly display CKEditor content without escaping HTML --}}
+                <p>{!! $overview->content !!}</p>
 
-                <p><i class="fas fa-broadcast-tower icons"></i> Several network operators use millimeter waves called FR2 in 5G terminology, for additional capacity and higher throughputs. Millimeter waves have a shorter range than the lower frequency microwaves, therefore the cells are of a smaller size. Millimeter waves also have more trouble passing through building walls and humans. Millimeter-wave antennas are smaller than the large antennas used in previous cellular networks.</p>
-
-                <p><i class="fas fa-wind icons"></i> The increased data rate is achieved partly by using additional higher-frequency radio waves in addition to the low- and medium-band frequencies used in previous cellular networks. For providing a wide range of services, 5G networks can operate in three frequency bands — low, medium, and high.</p>
-
-                <p><i class="fas fa-satellite icons"></i> 5G is capable of delivering significantly faster data rates than 4G, with peak data rates of up to 20 gigabits per second (Gbps). Furthermore, average 5G download speeds have been recorded at 186.3 Mbit/s in the U.S. by T-Mobile, while South Korea leads globally with average speeds of 432 megabits per second (Mbps).5G networks are also designed to provide significantly more capacity than 4G networks, with a projected 100-fold increase in network capacity and efficiency.</p>
-
-            
-           
+                {{-- Delete Button with Confirmation --}}
+          
             </div>
+        </div>
+    @endforeach
         </div>
     </div>
     
@@ -62,3 +81,9 @@
                   </div>
 
 @include('includes.footer')
+
+  <script>
+    function goBack() {
+        window.history.back(); // This takes the user to the previous page in history
+    }
+</script>
